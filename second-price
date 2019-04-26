@@ -1,0 +1,57 @@
+// You can add this function in houzez-child -> functions.php and add class for $price_postfix
+function houzez_listing_price_v1()
+    { 
+        $output = '';
+        $sale_price     = get_post_meta( get_the_ID(), 'fave_property_price', true );
+        $second_price   = get_post_meta( get_the_ID(), 'fave_property_sec_price', true );
+        $price_postfix  = get_post_meta( get_the_ID(), 'fave_property_price_postfix', true );
+        $price_prefix   = get_post_meta( get_the_ID(), 'fave_property_price_prefix', true );
+        $price_as_text = doubleval( $sale_price );
+        if( !$price_as_text ) {
+            if( is_singular( 'property' ) ) {
+                $output .= '<span class="item-price item-price-text price-single-listing-text">'.$sale_price. '</span>';
+                return $output;
+            }
+            $output .= '<span class="item-price item-price-text">'.$sale_price. '</span>';
+            return $output;
+        }
+        if( !empty( $price_prefix ) ) {
+            $price_prefix = '<span class="price-start">'.$price_prefix.'</span>';
+        }
+        if (!empty( $sale_price ) ) {
+            if (!empty( $price_postfix )) {
+                $price_postfix = '/' . $price_postfix;
+            }
+            if (!empty( $sale_price ) && !empty( $second_price ) ) {
+                if( is_singular( 'property' ) ) {
+                    $output .= '<span class="item-price">'.$price_prefix. houzez_get_property_price($sale_price) . '</span>';
+                    if (!empty($second_price)) {
+                        $output .= '<span class="item-sub-price">';
+                        $output .= houzez_get_property_price($second_price) . $price_postfix;
+                        $output .= '</span>';
+                    }
+                } else {
+                    $output .= $price_prefix.'<span class="item-price">'. houzez_get_property_price($sale_price) . '</span>';
+                    if (!empty($second_price)) {
+                        $output .= '<span class="item-sub-price">';
+                        $output .= houzez_get_property_price($second_price) . $price_postfix;
+                        $output .= '</span>';
+                    }
+                }
+            } else {
+                if (!empty( $sale_price )) {
+                    if( is_singular( 'property' ) ) {
+                        $output .= '<span class="item-price">';
+                        $output .= $price_prefix. houzez_get_property_price($sale_price) . $price_postfix;
+                        $output .= '</span>';
+                    } else {
+                        $output .= $price_prefix;
+                        $output .= '<span class="item-price">';
+                        $output .= houzez_get_property_price($sale_price) . $price_postfix;
+                        $output .= '</span>';
+                    }
+                }
+            }
+        }
+        return $output;
+    }
